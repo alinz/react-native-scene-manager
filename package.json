@@ -1,6 +1,6 @@
 {
   "name": "react-native-scene-manager",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Simple Scene Manager for React-Native",
   "main": "example/scene-manager.js",
   "keywords": [

@@ -38,6 +38,17 @@ class SceneManager extends Component {
   transitTo(name, component, props) {
     var state = this.state;
 
+    if (state.views.length == 1) {
+      if (state.views[0].name === name) {
+        state.views[0].props = props;
+        state.views[0].opacity = 0;
+
+        this.startAnimation();
+
+        return true;
+      }
+    }
+
     if (!this.isAnimationg) {
       state.views.push({
         name: name,
