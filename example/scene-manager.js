@@ -2,9 +2,6 @@
 
 var React = require('react-native');
 
-var Dimensions = require('Dimensions');
-var window = Dimensions.get('window');
-
 var {
   StyleSheet,
   Component,
@@ -22,54 +19,10 @@ var styles = StyleSheet.create({
     right: 0,
     top: 0,
     bottom: 0
-  },
-  frontView: {
-    backgroundColor: 'white'
-  },
-  backView: {
-    backgroundColor: 'black'
   }
 });
 
-class ViewExample1 extends Component {
-  constructor(props) {
-    super(props);
-  }
-
-  componentDidMount() {
-    console.log('ViewExample1 is created');
-  }
-
-  componentWillUnmount() {
-    console.log('ViewExample1 is destroyed');
-  }
-
-  render() {
-    return (
-      <View style={{ flex: 1, backgroundColor: 'red' }}/>
-    );
-  }
-}
-
-class ViewExample2 extends Component {
-  constructor(props) {
-    super(props);
-  }
-
-  componentDidMount() {
-    console.log('ViewExample2 is created');
-  }
-
-  componentWillUnmount() {
-    console.log('ViewExample2 is destroyed');
-  }
-
-  render() {
-    return (
-      <View style={{ flex: 1, backgroundColor: 'yellow' }}/>
-    );
-  }
-}
+function noop() { }
 
 class SceneManager extends Component {
   constructor(props) {
@@ -79,24 +32,34 @@ class SceneManager extends Component {
       views: []
     };
 
-    this.animation = null;
+    this.isAnimating = false;
   }
 
   transitTo(name, component, props) {
     var state = this.state;
 
-    state.views.push({
-      name: name,
-      component: component,
-      props: props,
+    if (!this.isAnimationg) {
+      state.views.push({
+        name: name,
+        component: component,
+        props: props,
+        opacity: 0
+      });
 
-      opacity: 0
-    });
+      this.props.onLoading(name);
+      this.startAnimation();
 
-    this.startAnimation();
+      return true;
+    }
+
+    return false;
   }
 
   startAnimation() {
+    var props = this.props;
+
+    this.isAnimating = true;
+
     var loop = () => {
       var state = this.state,
           viewFront, viewBack;
@@ -104,14 +67,18 @@ class SceneManager extends Component {
       switch(state.views.length) {
         case 0:
           //no views yet so cancel the animation
+          this.isAnimating = false;
           return;
 
         case 1:
           //check the opacity value
           viewFront = state.views[0];
           if (viewFront.opacity < 1) {
-            viewFront.opacity += 0.05;
+            viewFront.opacity += props.opacityStep;
+            this.setState(state);
           } else {
+            props.onLoaded(viewFront.name);
+            this.isAnimating = false;
             return;
           }
           break;
@@ -122,19 +89,20 @@ class SceneManager extends Component {
 
           if (viewFront.opacity < 1) {
             //viewFront is displaying,
-            viewFront.opacity += 0.05;
-            viewBack.opacity -= 0.05;
+            viewFront.opacity += props.opacityStep;
+            viewBack.opacity -= props.opacityStep;
+
+            this.setState(state);
           } else {
             //we need to remove the view from stack
             state.views.shift();
+            props.onLoaded(viewFront.name);
 
-            //we have to test whether we need this or not.
-            viewBack.componentWillUnMount && viewBack.componentWillUnMount();
+            this.setState(state);
+            return;
           }
           break;
       }
-
-      this.setState(state);
 
       requestAnimationFrame(loop);
     };
@@ -142,37 +110,28 @@ class SceneManager extends Component {
     requestAnimationFrame(loop);
   }
 
-  componentDidMount() {
-    setTimeout(() => {
-      this.transitTo('front1', ViewExample1, {});
-
-      console.log('####');
-    }, 1000);
-
-    setTimeout(() => {
-      this.transitTo('front2', ViewExample2, {});
-      console.log('####');
-    }, 3000);
-
-    setTimeout(() => {
-      this.transitTo('front1', ViewExample1, {});
-      console.log('####');
-    }, 5000);
+  genScene(key, opacity, Component, props) {
+    return (
+      <View key={key} style={[styles.fill, {opacity: opacity}]}>
+        <Component {...props}/>
+      </View>
+    );
   }
 
   render() {
     var state = this.state;
 
     var views = state.views.map((view, index) => {
-      var Component = view.component,
-          props = view.props;
-
-      return (
-        <View key={index} style={[styles.fill, {opacity: view.opacity}]}>
-          <Component {...props}/>
-        </View>
-      );
+      return this.genScene(index, view.opacity, view.component, view.props);
     });
+
+    //this is the initial view
+    if (views.length == 0) {
+      //injecting init view into the stack
+      views.push(
+        this.genScene(-1, 1, this.props.initView, this.props.initViewProps)
+      );
+    }
 
     return (
       <View style={styles.container}>
@@ -181,5 +140,20 @@ class SceneManager extends Component {
     );
   }
 }
+
+SceneManager.propTypes = {
+  initView: React.PropTypes.func.isRequired,
+  initViewProps: React.PropTypes.object,
+  opacityStep: React.PropTypes.number,
+  onLoading: React.PropTypes.func,
+  onLoaded: React.PropTypes.func
+};
+
+SceneManager.defaultProps = {
+  initViewProps: {},
+  opacityStep: 0.05,
+  onLoading: noop,
+  onLoaded: noop
+};
 
 module.exports = SceneManager;

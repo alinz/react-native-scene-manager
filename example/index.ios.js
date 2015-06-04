@@ -5,7 +5,6 @@
 'use strict';
 
 var React = require('react-native');
-
 var SceneManager = require('./scene-manager.js');
 
 var {
@@ -13,8 +12,8 @@ var {
   StyleSheet,
   Text,
   View,
+  Component
 } = React;
-
 
 var styles = StyleSheet.create({
   container: {
@@ -25,16 +24,66 @@ var styles = StyleSheet.create({
   }
 });
 
+class ViewExample1 extends Component {
+  constructor(props) {
+    super(props);
+  }
+
+  render() {
+    return (
+      <View style={{ flex: 1, backgroundColor: 'red' }}/>
+    );
+  }
+}
+
+class ViewExample2 extends Component {
+  constructor(props) {
+    super(props);
+  }
+
+  render() {
+    return (
+      <View style={{ flex: 1, backgroundColor: 'yellow' }}/>
+    );
+  }
+}
+
 var example = React.createClass({
+  componentDidMount() {
+    var scene = this.refs.scene;
+
+    setTimeout(() => {
+      scene.transitTo('front1', ViewExample1, {});
+    }, 1000);
+
+    setTimeout(() => {
+      scene.transitTo('front2', ViewExample2, {});
+    }, 3000);
+
+    setTimeout(() => {
+      scene.transitTo('front1', ViewExample1, {});
+    }, 5000);
+  },
+
+  onLoading: function (name) {
+    console.log('loading ' + name);
+  },
+
+  onLoaded: function (name) {
+    console.log(name + ' is loaded');
+  },
+
   render: function() {
     return (
       <View style={styles.container}>
-        <SceneManager/>
+        <SceneManager
+          ref="scene"
+          initView={ViewExample2}
+          onLoading={this.onLoading}
+          onLoaded={this.onLoaded}/>
       </View>
     );
   }
 });
-
-
 
 AppRegistry.registerComponent('example', () => example);
