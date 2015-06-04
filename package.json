@@ -1,0 +1,15 @@
+{
+  "name": "react-native-scene-manager",
+  "version": "0.1.0",
+  "description": "Simple Scene Manager for React-Native",
+  "main": "index.js",
+  "keywords": [
+    "react-native",
+    "scene-manager"
+  ],
+  "author": "Ali Najafizadeh",
+  "license": "MIT",
+  "dependencies": {
+    "react-native": "^0.4"
+  }
+}
