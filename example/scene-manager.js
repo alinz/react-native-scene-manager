@@ -119,19 +119,22 @@ class SceneManager extends Component {
   }
 
   render() {
-    var state = this.state;
+    var state = this.state,
+        props = this.props;
 
-    var views = state.views.map((view, index) => {
-      return this.genScene(index, view.opacity, view.component, view.props);
-    });
+    if (state.views.length == 0) {
+      state.views.push({
+        name: props.initViewName,
+        component: props.initView,
+        props: props.initViewProps,
 
-    //this is the initial view
-    if (views.length == 0) {
-      //injecting init view into the stack
-      views.push(
-        this.genScene(-1, 1, this.props.initView, this.props.initViewProps)
-      );
+        opacity: 1
+      });
     }
+
+    var views = state.views.map((view) => {
+      return this.genScene(view.name, view.opacity, view.component, view.props);
+    });
 
     return (
       <View style={styles.container}>
@@ -144,6 +147,7 @@ class SceneManager extends Component {
 SceneManager.propTypes = {
   initView: React.PropTypes.func.isRequired,
   initViewProps: React.PropTypes.object,
+  initViewName: React.PropTypes.string,
   opacityStep: React.PropTypes.number,
   onLoading: React.PropTypes.func,
   onLoaded: React.PropTypes.func
@@ -151,6 +155,7 @@ SceneManager.propTypes = {
 
 SceneManager.defaultProps = {
   initViewProps: {},
+  initViewName: 'init-scene-view',
   opacityStep: 0.05,
   onLoading: noop,
   onLoaded: noop
