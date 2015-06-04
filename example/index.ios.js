@@ -29,6 +29,14 @@ class ViewExample1 extends Component {
     super(props);
   }
 
+  componentDidMount() {
+    console.log('ViewExample1 created');
+  }
+
+  componentWillUnmount() {
+    console.log('ViewExample1 destroyed');
+  }
+
   render() {
     return (
       <View style={{ flex: 1, backgroundColor: 'red' }}/>
@@ -39,6 +47,14 @@ class ViewExample1 extends Component {
 class ViewExample2 extends Component {
   constructor(props) {
     super(props);
+  }
+
+  componentDidMount() {
+    console.log('ViewExample2 created');
+  }
+
+  componentWillUnmount() {
+    console.log('ViewExample2 destroyed');
   }
 
   render() {
