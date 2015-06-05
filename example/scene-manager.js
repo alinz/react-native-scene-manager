@@ -41,9 +41,9 @@ class SceneManager extends Component {
     if (state.views.length == 1) {
       if (state.views[0].name === name) {
         state.views[0].props = props;
-        state.views[0].opacity = 0;
+        state.views[0].opacity = 1;
 
-        this.startAnimation();
+        this.setState(state);
 
         return true;
       }

@@ -39,7 +39,7 @@ class ViewExample1 extends Component {
 
   render() {
     return (
-      <View style={{ flex: 1, backgroundColor: 'red' }}/>
+      <View style={{ flex: 1, backgroundColor: this.props.color }}/>
     );
   }
 }
@@ -69,15 +69,15 @@ var example = React.createClass({
     var scene = this.refs.scene;
 
     setTimeout(() => {
-      scene.transitTo('front1', ViewExample1, {});
+      scene.transitTo('front1', ViewExample1, { color: 'blue'});
     }, 1000);
 
     setTimeout(() => {
-      scene.transitTo('front2', ViewExample2, {});
+      scene.transitTo('front1', ViewExample2, { color: 'red' });
     }, 3000);
 
     setTimeout(() => {
-      scene.transitTo('front1', ViewExample1, {});
+      scene.transitTo('front2', ViewExample1, {});
     }, 5000);
   },
 
