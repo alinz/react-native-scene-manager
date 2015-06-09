@@ -1,6 +1,6 @@
 {
   "name": "react-native-scene-manager",
-  "version": "0.1.3",
+  "version": "0.1.4",
   "description": "Simple Scene Manager for React-Native",
   "main": "jsx/scene-manager.js",
   "keywords": [
@@ -10,6 +10,14 @@
   "author": "Ali Najafizadeh",
   "license": "MIT",
   "peerDependencies": {
-    "react-native": ">=0.4"
-  }
+    "react-native": ">= 0.4"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:alinz/react-native-scene-manager.git"
+  },
+  "bugs": {
+    "url": "https://github.com/alinz/react-native-scene-manager/issues"
+  },
+  "homepage": "https://github.com/alinz/react-native-scene-manager"
 }
