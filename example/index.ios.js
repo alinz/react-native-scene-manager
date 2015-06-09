@@ -5,7 +5,7 @@
 'use strict';
 
 var React = require('react-native');
-var SceneManager = require('./scene-manager.js');
+var SceneManager = require('react-native-scene-manager');
 
 var {
   AppRegistry,
